@@ -25,7 +25,7 @@ const scraper = async (url) => {
     const parsedUrl = new URL(url)
     const searchTerm = parsedUrl.searchParams.get('q') || ''
     const notify = await urlAlreadySearched(url)
-    $logger.info(`Will notify: ${notify}`)
+    $logger.info(`Sera enviado ao Telegram: ${notify}`)
 
     do {
         currentUrl = setUrlParam(url, 'o', page)
@@ -42,14 +42,14 @@ const scraper = async (url) => {
 
     } while (nextPage);
 
-    $logger.info('Valid ads: ' + validAds)
+    $logger.info('Itens validos: ' + validAds)
 
     if (validAds) {
         const averagePrice = sumPrices / validAds;
 
-        $logger.info('Maximum price: ' + maxPrice)
-        $logger.info('Minimum price: ' + minPrice)
-        $logger.info('Average price: ' + sumPrices / validAds)
+        $logger.info('Preco maximo: ' + maxPrice)
+        $logger.info('Preco minimo: ' + minPrice)
+        $logger.info('Preco medio: ' + sumPrices / validAds)
 
         const scrapperLog = {
             url,
@@ -60,12 +60,14 @@ const scraper = async (url) => {
         }
 
         await scraperRepository.saveLog(scrapperLog)
+	process.exit()
     }
 }
 
 const scrapePage = async ($, searchTerm, notify) => {
     try {
         const script = $('script[id="__NEXT_DATA__"]').text()
+	
 
         if (!script) {
             return false
@@ -79,12 +81,12 @@ const scrapePage = async ($, searchTerm, notify) => {
 
         adsFound += adList.length
 
-        $logger.info(`Checking new ads for: ${searchTerm}`)
-        $logger.info('Ads found: ' + adsFound)
+        $logger.info(`Procurando novos itens com o termo: ${searchTerm}`)
+        $logger.info('Itens encontrados: ' + adsFound)
 
         for (let i = 0; i < adList.length; i++) {
 
-            $logger.debug('Checking ad: ' + (i + 1))
+            $logger.debug('Verificando item: ' + (i + 1))
 
             const advert = adList[i]
             const title = advert.subject
@@ -115,7 +117,7 @@ const scrapePage = async ($, searchTerm, notify) => {
         return true
     } catch (error) {
         $logger.error(error);
-        throw new Error('Scraping failed');
+        throw new Error('Scraping falhou');
     }
 }
 
@@ -125,7 +127,7 @@ const urlAlreadySearched = async (url) => {
         if (ad.length) {
             return true
         }
-        $logger.info('First run, no notifications')
+        $logger.info('Rodando pela primeira vez, nao havera notificacao')
         return false
     } catch (error) {
         $logger.error(error)

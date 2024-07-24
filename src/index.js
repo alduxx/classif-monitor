@@ -1,5 +1,5 @@
 const config = require("./config")
-const cron = require("node-cron")
+//const cron = require("node-cron")
 const { initializeCycleTLS } = require("./components/CycleTls")
 const $logger = require("./components/Logger")
 const { scraper } = require("./components/Scraper")
@@ -25,6 +25,6 @@ const main = async () => {
 
 main()
 
-cron.schedule(config.interval, () => {
-  runScraper()
-})
+//cron.schedule(config.interval, () => {
+ // runScraper()
+//})

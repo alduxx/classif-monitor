@@ -21,7 +21,7 @@ class Ad {
     process = async () => {
 
         if (!this.isValidAd()) {
-            $logger.debug('Ad not valid');
+            $logger.debug('Item invalido');
             return false
         }
 
@@ -55,7 +55,7 @@ class Ad {
 
         try {
             await adRepository.createAd(this)
-            $logger.info('Ad ' + this.id + ' added to the database')
+            $logger.info('Item ' + this.id + ' adicionado ao banco de dados.')
         }
 
         catch (error) {
@@ -64,10 +64,10 @@ class Ad {
 
         if (this.notify) {
             try {
-                const msg = 'New ad found!\n' + this.title + ' - R$' + this.price + '\n\n' + this.url
+                const msg = 'Novo item encontrado!\n' + this.title + ' - R$' + this.price + '\n\n' + this.url
                 notifier.sendNotification(msg, this.id)
             } catch (error) {
-                $logger.error('Could not send a notification')
+                $logger.error('Erro ao enviar notificação.')
             }
         }
     }
@@ -91,12 +91,12 @@ class Ad {
             // just send a notification if the price dropped
             if (this.price < this.saved.price) {
 
-                $logger.info('This ad had a price reduction: ' + this.url)
+                $logger.info('Preço desse item foi reduzido: ' + this.url)
 
                 const decreasePercentage = Math.abs(Math.round(((this.price - this.saved.price) / this.saved.price) * 100))
 
-                const msg = 'Price drop found! ' + decreasePercentage + '% OFF!\n' +
-                    'From R$' + this.saved.price + ' to R$' + this.price + '\n\n' + this.url
+                const msg = 'Preço desse item caiu! ' + decreasePercentage + '% de desconto!\n' +
+                    'De R$' + this.saved.price + ' para R$' + this.price + '\n\n' + this.url
 
                 try {
                     await notifier.sendNotification(msg, this.id)
