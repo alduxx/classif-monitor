@@ -112,7 +112,8 @@ class Ad {
     // let's clean those empty ads
     isValidAd = () => {
 
-        if (!isNaN(this.price) && this.url && this.id) {
+        // Adicionei teste para verificar se o termo estah na URL para evitar buscar tambem na descricao
+        if (!isNaN(this.price) && this.url && this.id && this.title.includes(this.searchTerm) ) {
             this.valid = true
             return true
         }
